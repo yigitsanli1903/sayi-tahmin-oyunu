@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sayı Tahmin Oyunu</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h2>🎯 Sayı Tahmin Oyunu</h2>
+  <input id="guessInput" type="number" placeholder="Tahminin (1-100)">
+  <button onclick="sendGuess()">Tahmin Et</button>
+  <pre id="log"></pre>
+
+  <script>
+    const socket = io.connect(window.location.origin);
+    const log = document.getElementById('log');
+
+    socket.on('connect', () => {
+      log.textContent += "Sunucuya bağlandın!\n";
+    });
+
+    socket.on('message', (data) => {
+      log.textContent += data.msg + "\n";
+      log.scrollTop = log.scrollHeight;
+    });
+
+    function sendGuess() {
+      const guess = document.getElementById('guessInput').value;
+      if (guess) {
+        socket.emit('guess', { guess: guess });
+        document.getElementById('guessInput').value = '';
+      }
+    }
+  </script>
+</body>
+</html>
